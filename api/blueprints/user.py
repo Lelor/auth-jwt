@@ -1,5 +1,6 @@
 from flask import Blueprint, request, jsonify, current_app
 from schema import SchemaError
+from sqlalchemy.exc import IntegrityError
 
 from api.models import User
 from api.modules.validators import (user_registration_validator,
@@ -23,13 +24,20 @@ def add_user():
 
     On request validation error:
         Returns an error message and a status of 400 (BAD REQUEST).
+
+    On database integrity error:
+        Returns an error message and a status of 409 (CONFLICT).
     """
     try:
         user_registration_validator.validate(request.json)
         user = registrate_user(request.json['username'],
                                request.json['email'],
                                request.json['password'])
-        return jsonify(message='success', token=user.generate_token()), 201
+        if user:
+            return jsonify(message='success', token=user.generate_token()), 201
+        
+        return jsonify(message='user already registered'), 409
+
     except SchemaError:
         return jsonify(message='invalid data'), 400
 
