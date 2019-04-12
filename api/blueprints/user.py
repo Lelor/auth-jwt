@@ -4,11 +4,13 @@ from sqlalchemy.exc import IntegrityError
 
 from api.models import User
 from api.modules.validators import (user_registration_validator,
-                                    user_auth_validator)
+                                    user_auth_validator,
+                                    validate_token)
 from api.modules.user import registrate_user, authenticate
 
 
 bp = Blueprint('users', __name__)
+
 
 @bp.route("/user", methods=["POST"])
 def add_user():
@@ -17,7 +19,7 @@ def add_user():
         - username: str
         - email: str
         - password: str
-    
+
     On success:
         Returns a success message and an active token with 20 minutes
         of duration, status 201.
@@ -35,7 +37,7 @@ def add_user():
                                request.json['password'])
         if user:
             return jsonify(message='success', token=user.generate_token()), 201
-        
+
         return jsonify(message='user already registered'), 409
 
     except SchemaError:
@@ -48,14 +50,14 @@ def sign_in():
     Authentication route, the request must have the following fields:
         - username: str
         - password: str
-    
+
     On success:
         Returns a success message and an active token with 20 minutes
         of duration, status 200
 
     On invalid credentials:
         Returns a error message and a status of 401 (FORBIDDEN)
-    
+
     On request validation error:
         Returns an error message and a status of 400 (BAD REQUEST).
     """
@@ -68,3 +70,12 @@ def sign_in():
         return jsonify(message='invalid credentials'), 401
     except SchemaError:
         return jsonify(message='invalid data'), 400
+
+
+@bp.route('/secret', methods=['GET'])
+@validate_token
+def super_secret_route():
+    """
+    Example route to exemplify the use of an authenticated endpoint.
+    """
+    return jsonify(message='super secret message')

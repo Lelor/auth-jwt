@@ -130,3 +130,31 @@ class TestSignIn(TestCase):
         session.commit()
         res = self.client.post('/sign_in', json=invalid_credentials)
         self.assertEqual(res.status_code, 401)
+
+    def test_get_authenticated_route_with_valid_token(self):
+        """Validates that a valid token works on authenticated route."""
+        data = {
+            'username': 'testuser',
+            'email': 'testuser@test.test',
+            'password': 'secret'
+        }
+        usr = User(**data)
+        token = usr.generate_token()
+        res = self.client.get('/secret', headers={'auth-token': token})
+        self.assertEqual(res.status_code, 200)
+
+    def test_get_authenticated_route_with_invalid_token(self):
+        """
+        Validates that an invalid token doesn't work on authenticated route.
+        """
+        res = self.client.get('/secret', headers={'auth-token': 'token'})
+        self.assertEqual(res.status_code, 403)
+
+    def test_get_authenticated_route_with_expired_token(self):
+        """
+        Validates that an expired token doesn't work on authenticated route.
+        """
+        token = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjE1NTUwNzQ3MjR9\
+                .LTm9mFZXQTzqpYKgOb3C10Zxu50bfom-fX6OsHmd-a4'
+        res = self.client.get('/secret', headers={'auth-token': token})
+        self.assertEqual(res.status_code, 403)
