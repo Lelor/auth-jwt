@@ -1,3 +1,4 @@
+"""Models module."""
 from datetime import datetime, timedelta
 
 import jwt
@@ -52,7 +53,7 @@ class User(Base):
 
         Args:
             str password: password inputed by the user.
-        
+
         Returns:
             on success: JWT token with a 20min expiration and the user id.
             on failure: None
