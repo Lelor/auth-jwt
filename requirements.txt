@@ -1,4 +1,6 @@
+bcrypt
 flask
-flask_sqlalchemy
 flask_marshmallow
+sqlalchemy
+sqlalchemy-marshmallow
 pyjwt

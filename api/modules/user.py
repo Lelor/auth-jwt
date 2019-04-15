@@ -1,3 +1,4 @@
+"""Module for user interactions."""
 from flask import current_app
 from sqlalchemy.exc import IntegrityError
 
