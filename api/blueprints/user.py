@@ -71,6 +71,6 @@ def sign_in():
 @validate_token
 def super_secret_route(token):
     """
-    Example route to exemplify the use of an authenticated endpoint.
+    Route to exemplify the use of an authenticated endpoint.
     """
     return jsonify(message='super secret message', decoded_token=token)
