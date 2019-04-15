@@ -3,6 +3,7 @@ from unittest import TestCase
 
 from api import create_app
 from api.models import User, engine, Base, session
+from api.modules.user import registrate_user
 
 
 class TestSignUp(TestCase):
@@ -91,8 +92,7 @@ class TestSignIn(TestCase):
             'password': 'secret'
         }
         usr = User(**data)
-        session.add(usr)
-        session.commit()
+        registrate_user(usr)
         del data['email']
         res = self.client.post('/sign_in', json=data)
         self.assertEqual(res.status_code, 200)
@@ -109,8 +109,7 @@ class TestSignIn(TestCase):
         invalid_credentials = {'username': 'tstuser',
                                'password': 'secret'}
         usr = User(**data)
-        session.add(usr)
-        session.commit()
+        registrate_user(usr)
         res = self.client.post('/sign_in', json=invalid_credentials)
         self.assertEqual(res.status_code, 401)
 
@@ -126,8 +125,7 @@ class TestSignIn(TestCase):
         invalid_credentials = {'username': 'testuser',
                                'password': 'scret'}
         usr = User(**data)
-        session.add(usr)
-        session.commit()
+        registrate_user(usr)
         res = self.client.post('/sign_in', json=invalid_credentials)
         self.assertEqual(res.status_code, 401)
 
@@ -139,6 +137,7 @@ class TestSignIn(TestCase):
             'password': 'secret'
         }
         usr = User(**data)
+        registrate_user(usr)
         token = usr.generate_token()
         res = self.client.get('/secret', headers={'auth-token': token})
         self.assertEqual(res.status_code, 200)

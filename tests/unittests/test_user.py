@@ -10,7 +10,7 @@ from api.models import User, secret
 class TestUser(TestCase):
     """Testcase for user related functions."""
 
-    def test_user_serialization_should_encrypt_password(self):
+    def test_user_should_encrypt_password(self):
         """Validates that the serialization encrypts the given password"""
         data = {
             'username': 'testuser',
@@ -18,7 +18,9 @@ class TestUser(TestCase):
             'password': 'secret'
         }
         usr = User(**data)
-        self.assertNotEqual(data['password'], usr.password_hash)
+        usr.hash_password()
+
+        self.assertNotEqual(data['password'], usr.password)
 
     def test_password_hash_should_match_given_string(self):
         """
@@ -30,8 +32,9 @@ class TestUser(TestCase):
             'password': 'secret'
         }
         usr = User(**data)
+        usr.hash_password()
         encoded_pw = data['password'].encode('utf-8')
-        self.assertTrue(checkpw(encoded_pw, usr.password_hash))
+        self.assertTrue(checkpw(encoded_pw, usr.password))
 
     def test_user_token_should_be_generated_with_the_user_id(self):
         """Validates that the generated token have the right configuration."""
@@ -41,6 +44,7 @@ class TestUser(TestCase):
             'password': 'secret'
         }
         usr = User(**data)
+        usr.hash_password()
         token = usr.generate_token()
         decoded = decode(token, secret, algorithms=['HS256'])
         self.assertEqual(decoded['user'], usr.id)
@@ -56,6 +60,7 @@ class TestUser(TestCase):
             'password': 'secret'
         }
         usr = User(**data)
+        usr.hash_password()
         token = usr.authenticate(data['password'])
         self.assertIsNotNone(token)
 
@@ -70,5 +75,6 @@ class TestUser(TestCase):
             'password': 'secret'
         }
         usr = User(**data)
+        usr.hash_password()
         token = usr.authenticate('invalid')
         self.assertIsNone(token)

@@ -27,14 +27,17 @@ class User(Base):
     id = Column(Integer, primary_key=True)
     username = Column(String, unique=True)
     email = Column(String, unique=True)
-    password_hash = Column(String, nullable=False)
+    password = Column(String, nullable=False)
     created_at = Column(DateTime, nullable=False, default=datetime.now())
     updated_at = Column(DateTime, nullable=False, default=datetime.now())
 
-    def __init__(self, username, email, password):
-        self.username = username
-        self.email = email
-        self.password_hash = hashpw(password.encode('utf-8'), gensalt(8))
+    def hash_password(self):
+        """
+        Encrypts the password.
+        Required to be called before transaction commit.
+        """
+        self.password = hashpw(self.password.encode('utf-8'),
+                               gensalt(8))
 
     def generate_token(self):
         """
@@ -58,5 +61,5 @@ class User(Base):
             on success: JWT token with a 20min expiration and the user id.
             on failure: None
         """
-        if checkpw(password.encode('utf-8'), self.password_hash):
+        if checkpw(password.encode('utf-8'), self.password):
             return self.generate_token()

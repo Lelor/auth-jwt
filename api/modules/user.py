@@ -4,7 +4,7 @@ from sqlalchemy.exc import IntegrityError
 from api.models import User
 
 
-def registrate_user(username, email, password):
+def registrate_user(user):
     """
     Receive the user data and saves it on the database.
 
@@ -17,9 +17,7 @@ def registrate_user(username, email, password):
         on success: registered user object.
         on failure: None
     """
-    user = User(username,
-                email,
-                password)
+    user.hash_password()
     try:
         current_app.session.add(user)
         current_app.session.commit()
@@ -29,6 +27,10 @@ def registrate_user(username, email, password):
 
 
 def authenticate(username, password):
+    """
+    Authenticates given credentials and returns it's token on success
+    and None on failure.
+    """
     usr = current_app.session.query(User).filter_by(username=username).first()
     if usr:
         return usr.authenticate(password)
