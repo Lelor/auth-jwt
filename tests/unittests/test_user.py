@@ -1,8 +1,8 @@
 """Unit tests for user related functions and methods."""
 from unittest import TestCase
 
-from bcrypt import checkpw
 from jwt import decode
+from werkzeug.security import check_password_hash
 
 from api.models import User, secret
 
@@ -24,7 +24,7 @@ class TestUser(TestCase):
 
     def test_password_hash_should_match_given_string(self):
         """
-        Validates that bcrypt is able to match the given string to it's hash.
+        Validates that blowfish is able to match the given string to it's hash.
         """
         data = {
             'username': 'testuser',
@@ -33,8 +33,7 @@ class TestUser(TestCase):
         }
         usr = User(**data)
         usr.hash_password()
-        encoded_pw = data['password'].encode('utf-8')
-        self.assertTrue(checkpw(encoded_pw, usr.password))
+        self.assertTrue(check_password_hash(usr.password, data['password']))
 
     def test_user_token_should_be_generated_with_the_user_id(self):
         """Validates that the generated token have the right configuration."""

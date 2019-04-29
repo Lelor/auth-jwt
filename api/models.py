@@ -1,8 +1,8 @@
 """Models module."""
 from datetime import datetime, timedelta
+from werkzeug.security import generate_password_hash, check_password_hash
 
 import jwt
-from bcrypt import hashpw, gensalt, checkpw
 from sqlalchemy import (Column,
                         DateTime,
                         Integer,
@@ -36,8 +36,7 @@ class User(Base):
         Encrypts the password.
         Required to be called before transaction commit.
         """
-        self.password = hashpw(self.password.encode('utf-8'),
-                               gensalt(8))
+        self.password = generate_password_hash(self.password)
 
     def generate_token(self):
         """
@@ -61,5 +60,5 @@ class User(Base):
             on success: JWT token with a 20min expiration and the user id.
             on failure: None
         """
-        if checkpw(password.encode('utf-8'), self.password):
+        if check_password_hash(self.password, password):
             return self.generate_token()
