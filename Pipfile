@@ -4,13 +4,16 @@ url = "https://pypi.org/simple"
 verify_ssl = true
 
 [dev-packages]
+requests = "*"
+ipdb = "*"
+behave = "==1.2.5"
 
 [packages]
-requirements-txt = "*"
 flask = "*"
-PyJWT = "*"
 flask-sqlalchemy = "*"
 flask-marshmallow = "*"
+marshmallow-sqlalchemy = "*"
+pyjwt = "*"
 
 [requires]
 python_version = "3.7"
