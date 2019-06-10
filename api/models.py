@@ -14,7 +14,7 @@ from sqlalchemy.orm import sessionmaker, scoped_session
 
 secret = 'super_secret'
 
-engine = create_engine('sqlite:///:memory:', echo=False)
+engine = create_engine('sqlite:///app.db', echo=False)
 session_factory = sessionmaker(bind=engine)
 session = scoped_session(session_factory)
 Base = declarative_base()
@@ -62,3 +62,10 @@ class User(Base):
         """
         if check_password_hash(self.password, password):
             return self.generate_token()
+
+
+def init_db():
+    # import all modules here that might define models so that
+    # they will be registered properly on the metadata.  Otherwise
+    # you will have to import them first before calling init_db()
+    Base.metadata.create_all(bind=engine)

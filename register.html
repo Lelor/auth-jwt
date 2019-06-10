@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Cadastro</title>
+  </head>
+  <body>
+    <label for="username">Nome de usuário </label>
+    <input type="text" id="username" /><br />
+
+    <label for="email">Email </label>
+    <input type="text" id="email" /><br />
+
+    <label for="password">Senha </label>
+    <input type="text" id="password" /><br />
+
+    <button id="send">Enviar</button>
+
+    <span id="message"></span>
+
+    <script>
+      const usr = document.getElementById("username");
+      const pwd = document.getElementById("password");
+      const email = document.getElementById("email");
+      const btn = document.getElementById("send");
+      const msg = document.getElementById("message")
+      btn.addEventListener("click", () => {
+        let body = JSON.stringify({
+          username: usr.value,
+          password: pwd.value,
+          email: email.value
+        });
+        fetch("http://127.0.0.1:8000/user", {
+          method: "POST",
+          headers: {
+            Accept: "application/json, text/plain, */*",
+            "Content-Type": "application/json"
+          },
+          body: body
+        })
+          .then(function(response) {
+            return response.json();
+          })
+          .then(function(myJson) {
+            console.log(myJson);
+            msg.innerHTML = JSON.stringify(myJson);
+          });
+      });
+    </script>
+  </body>
+</html>

@@ -1,5 +1,5 @@
 """Blueprints for user transactions."""
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify, make_response
 
 from api.modules.validators import validate_token
 from api.modules.user import registrate_user, authenticate
@@ -30,13 +30,20 @@ def add_user():
     """
     user, err = USER_REGISTRATION_SERIALIZER.load(request.json)
     if err:
-        return jsonify(err), 400
+        r = make_response(jsonify(err))
+        r.headers["Access-Control-Allow-Origin"] = '*'
+        return r, 400
     result = registrate_user(user)
 
     if result:
-        return jsonify(message='success', token=user.generate_token()), 201
+        r = make_response(jsonify(message='success',
+                                  token=user.generate_token()))
+        r.headers["Access-Control-Allow-Origin"] = '*'
+        return r, 201
 
-    return jsonify(message='user already registered'), 409
+    r = make_response(jsonify(message='user already registered'))
+    r.headers["Access-Control-Allow-Origin"] = '*'
+    return r, 409
 
 
 @bp.route("/sign_in", methods=["POST"])
@@ -59,12 +66,18 @@ def sign_in():
 
     err = USER_AUTH_SERIALIZER.validate(request.json)
     if err:
-        return jsonify(err), 400
+        r = jsonify(err)
+        r.headers["Access-Control-Allow-Origin"] = '*'
+        return r, 400
     token = authenticate(request.json['username'],
                          request.json['password'])
     if token:
-        return jsonify(message='success', token=token), 200
-    return jsonify(message='invalid credentials'), 401
+        r = jsonify(message='success', token=token)
+        r.headers["Access-Control-Allow-Origin"] = '*'
+        return r, 200
+    r = make_response(jsonify(message='invalid credentials'))
+    r.headers["Access-Control-Allow-Origin"] = '*'
+    return r, 401
 
 
 @bp.route('/secret', methods=['GET'])
