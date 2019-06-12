@@ -3,14 +3,16 @@ from datetime import datetime, timedelta
 from werkzeug.security import generate_password_hash, check_password_hash
 
 import jwt
-from sqlalchemy import (Column,
+from sqlalchemy import (Boolean,
+                        Column,
                         DateTime,
                         Integer,
+                        ForeignKey,
                         String,
                         create_engine)
 
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker, scoped_session
+from sqlalchemy.orm import sessionmaker, scoped_session, relationship
 
 secret = 'super_secret'
 
@@ -28,6 +30,8 @@ class User(Base):
     username = Column(String, unique=True)
     email = Column(String, unique=True)
     password = Column(String, nullable=False)
+    birthdate = Column(DateTime, nullable=False)
+    is_admin = Column(Boolean, default=False)
     created_at = Column(DateTime, nullable=False, default=datetime.now())
     updated_at = Column(DateTime, nullable=False, default=datetime.now())
 
@@ -62,6 +66,25 @@ class User(Base):
         """
         if check_password_hash(self.password, password):
             return self.generate_token()
+
+
+class MovieGenre(Base):
+    __tablename__ = 'movie_genre'
+
+    id = Column(Integer, primary_key=True)
+    text = Column(String(30), nullable=False)
+
+
+class Movie(Base):
+    __tablename__ = 'movie'
+
+    id = Column(Integer, primary_key=True)
+    name = Column(String(100), nullable=False)
+    release_date = Column(DateTime)
+    director = Column(String)
+    genre_id = Column(Integer, ForeignKey('movie_genre.id'))
+    genre = relationship("MovieGenre")
+    picture = Column(String)
 
 
 def init_db():

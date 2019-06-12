@@ -2,7 +2,7 @@
 from flask_marshmallow import Marshmallow
 from marshmallow import fields
 
-from api.models import User
+from api.models import User, Movie, MovieGenre
 
 
 ma = Marshmallow()
@@ -18,12 +18,42 @@ class UserSchema(ma.ModelSchema):
     class Meta:
         """Class to dump on serialization."""
         model = User
-        fields = ('username', 'email', 'password')
+        fields = ('username', 'email', 'password', 'birthdate')
 
     username = fields.Str(required=True)
     password = fields.Str(required=True)
     email = fields.Email(required=True)
+    birthdate = fields.DateTime(required=True)
 
 
 USER_REGISTRATION_SERIALIZER = UserSchema()
 USER_AUTH_SERIALIZER = UserSchema(only=('username', 'password'))
+
+
+class MovieSchema(ma.ModelSchema):
+    """Schema for movie serialization."""
+    class Meta:
+        """Class to dump object on load."""
+        model = Movie
+        fields = ('name', 'release_date', 'director', 'genre_id', 'picture')
+    
+    name = fields.Str(required=True)
+    release_date = fields.DateTime(required=True)
+    director = fields.Str(required=True)
+    genre_id = fields.Int(required=True)
+    picture = fields.Str(required=True)
+
+
+MOVIE_SERIALIZER = MovieSchema()
+
+
+class MovieGenreSchema(ma.ModelSchema):
+    class Meta:
+        """Class to dump object on load."""
+        model = MovieGenre
+        fields = ('text',)
+    
+    text = fields.Str(required=True)
+
+
+MOVIE_GENRE_SERIALIZER = MovieGenreSchema()

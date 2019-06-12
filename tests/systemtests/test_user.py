@@ -1,5 +1,6 @@
 """User actions system tests module."""
 from unittest import TestCase
+from datetime import datetime
 
 from api import create_app
 from api.models import User, engine, Base, session
@@ -29,7 +30,8 @@ class TestSignUp(TestCase):
         data = {
             'username': 'testuser',
             'email': 'testuser@test.test',
-            'password': 'secret'
+            'password': 'secret',
+            'birthdate': '2019-06-12T17:10:42.917178'
         }
         res = self.client.post('/user', json=data)
         query = session.query(User).all()
@@ -41,7 +43,8 @@ class TestSignUp(TestCase):
         data = {
             'usrname': 'testuser',
             'email': 'testuser@test.test',
-            'password': 'secret'
+            'password': 'secret',
+            'birthdate': '2019-06-12T17:10:42.917178'
         }
         res = self.client.post('/user', json=data)
         query = session.query(User).all()
@@ -53,9 +56,11 @@ class TestSignUp(TestCase):
         data = {
             'username': 'testuser',
             'email': 'testuser@test.test',
-            'password': 'secret'
+            'password': 'secret',
+            'birthdate': datetime.utcnow()
         }
         usr = User(**data)
+        data['birthdate'] = datetime.utcnow().isoformat()
         session.add(usr)
         session.commit()
         res = self.client.post('/user', json=data)
@@ -89,7 +94,8 @@ class TestSignIn(TestCase):
         data = {
             'username': 'testuser',
             'email': 'testuser@test.test',
-            'password': 'secret'
+            'password': 'secret',
+            'birthdate': datetime.utcnow()
         }
         usr = User(**data)
         registrate_user(usr)
@@ -104,7 +110,8 @@ class TestSignIn(TestCase):
         data = {
             'username': 'testuser',
             'email': 'testuser@test.test',
-            'password': 'secret'
+            'password': 'secret',
+            'birthdate': datetime.utcnow()
         }
         invalid_credentials = {'username': 'tstuser',
                                'password': 'secret'}
@@ -120,7 +127,8 @@ class TestSignIn(TestCase):
         data = {
             'username': 'testuser',
             'email': 'testuser@test.test',
-            'password': 'secret'
+            'password': 'secret',
+            'birthdate': datetime.utcnow()
         }
         invalid_credentials = {'username': 'testuser',
                                'password': 'scret'}
@@ -134,7 +142,8 @@ class TestSignIn(TestCase):
         data = {
             'username': 'testuser',
             'email': 'testuser@test.test',
-            'password': 'secret'
+            'password': 'secret',
+            'birthdate': datetime.utcnow()
         }
         usr = User(**data)
         registrate_user(usr)

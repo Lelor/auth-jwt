@@ -15,7 +15,8 @@ class TestUser(TestCase):
         data = {
             'username': 'testuser',
             'email': 'testuser@test.test',
-            'password': 'secret'
+            'password': 'secret',
+            'birthdate': '2019-06-12T17:10:42.917178'
         }
         usr = User(**data)
         usr.hash_password()
@@ -29,7 +30,8 @@ class TestUser(TestCase):
         data = {
             'username': 'testuser',
             'email': 'testuser@test.test',
-            'password': 'secret'
+            'password': 'secret',
+            'birthdate': '2019-06-12T17:10:42.917178'
         }
         usr = User(**data)
         usr.hash_password()
@@ -40,7 +42,8 @@ class TestUser(TestCase):
         data = {
             'username': 'testuser',
             'email': 'testuser@test.test',
-            'password': 'secret'
+            'password': 'secret',
+            'birthdate': '2019-06-12T17:10:42.917178'
         }
         usr = User(**data)
         usr.hash_password()
@@ -56,7 +59,8 @@ class TestUser(TestCase):
         data = {
             'username': 'testuser',
             'email': 'testuser@test.test',
-            'password': 'secret'
+            'password': 'secret',
+            'birthdate': '2019-06-12T17:10:42.917178'
         }
         usr = User(**data)
         usr.hash_password()
@@ -71,7 +75,8 @@ class TestUser(TestCase):
         data = {
             'username': 'testuser',
             'email': 'testuser@test.test',
-            'password': 'secret'
+            'password': 'secret',
+            'birthdate': '2019-06-12T17:10:42.917178'
         }
         usr = User(**data)
         usr.hash_password()
